@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url('assets/font.Roboto-Italic.ttf') format('ttf');
+}
+
+.registerForm{
+  background-color: #121212;
+  color:#42b883;
+  font-size: large;
+  font-family:monospace
+}
+
+.nav-css{
+  background-color: #42b883;
+  color: black;
+  font-size: larger;
+  font-family: monospace;
+  font-weight: 700;
+}
+
+.nav-item .nav-link.active {
+  background-color: #06c971 !important; /* Change this to your desired background color */
+  color: black !important; /* Change this to your desired text color */
+}
+
+.footer{
+  background-color: #121212;
+  color: #06c971;
+}

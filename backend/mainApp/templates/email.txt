@@ -1,0 +1,9 @@
+Hello {{ username }}
+Thank you for subscribing to our premium service.
+You will receive your invoice shortly.
+We sincerely inform you that monthly susbscription cost is 500$
+
+Best regards,
+BAI project dev team 😘
+
+NOTE: This is for educational purposes only!

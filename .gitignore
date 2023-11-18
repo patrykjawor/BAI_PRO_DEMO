@@ -1,0 +1,8 @@
+# VS Code settings
+.vscode/
+# Python cache
+__pycache__/
+# Django database
+db.sqlite3
+# Node modules
+node_modules/
