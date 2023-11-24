@@ -1,9 +1,7 @@
 from django.http import HttpRequest, JsonResponse
-
-# Checks if user is logged in. Returns 401 with error message if not
 def require_login(func, *args, **kwargs):
     """
-    Checks whether user is logged in or not. Returns 401 with JSON error message if user is not logged in.
+    Sprawdza, czy użytkownik jest zalogowany. Zwraca 401 z komunikatem błędu JSON, jeśli użytkownik nie jest zalogowany.
 
     """
     def _wrapper(request:HttpRequest):

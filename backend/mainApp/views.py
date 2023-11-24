@@ -18,7 +18,13 @@ from io import BytesIO
 from base64 import b64encode
 
 @require_http_methods(['POST'])
-def register_view(request):    
+def register_view(request):
+    """
+    Rejestruje nowego użytkownika.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z komunikatem o sukcesie/błędzie
+    """
     try:
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -37,11 +43,9 @@ def register_view(request):
             user = form.save()
 
             if enable_2fa:
-                # Create a UserProfile for the user and set 2FA options in it.
                 profile, created = UserProfile.objects.get_or_create(user=user)
 
                 if not profile.totp_device:
-                    # Create a TOTP device
                     totp_device = TOTPDevice.objects.create(user=user, confirmed=False)
                     totp_device.save()
                     profile.totp_device = totp_device
@@ -63,7 +67,6 @@ def register_view(request):
                     encoded_img = b64encode(buffer.read()).decode()
                     qr_code_data = f'data:image/png;base64,{encoded_img}'
 
-                    # Prepare the response with the QR code image data
                     response_data = {
                     'message': 'User registered successfully',
                     'image_data': qr_code_data
@@ -82,6 +85,12 @@ def register_view(request):
     
 @require_http_methods(['POST'])
 def login_view(request):
+    """
+    Loguje użytkownika.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z komunikatem o sukcesie/błędzie
+    """
     try:
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -90,7 +99,6 @@ def login_view(request):
         if user is not None:
             requires_2fa = False
 
-            # Check if the user has 2FA enabled in their profile.
             try:
                 user_profile = UserProfile.objects.get(user=user)
                 if user_profile.enable_2fa:
@@ -99,7 +107,6 @@ def login_view(request):
                 pass
 
             if requires_2fa:
-                # 2FA is required. Check if the TOTP code is provided.
                 totp_code = request.POST.get('totp_code')
                 if totp_code:
                     try:
@@ -114,7 +121,6 @@ def login_view(request):
                 else:
                     return JsonResponse({'requires_2fa': True})
             else:
-                # 2FA is not required; proceed with the regular login.
                 login(request, user)
                 return JsonResponse({'message': 'User logged in successfully'})
         else:
@@ -125,19 +131,37 @@ def login_view(request):
     
 @require_http_methods(["POST"])
 def logout_view(request):
+    """
+    Wylogowuje użytkownika.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z komunikatem o wylogowaniu
+    """
     logout(request)
     return JsonResponse({'message':'User logged out'})
 
 
 @require_http_methods(['GET'])
-@ensure_csrf_cookie  # Zapewnia że ciastko zostanie wysłane podczas sprawdzania stanu użytkownika.
+@ensure_csrf_cookie
 def islogin(request):
+    """
+    Sprawdza stan zalogowania użytkownika.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z informacją o zalogowaniu
+    """
     return JsonResponse({"authenticated": request.user.is_authenticated})
 
 
 @require_http_methods(['GET'])
 @require_login
 def comments(request:HttpRequest):
+    """
+    Zwraca listę komentarzy.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z listą komentarzy
+    """
     return JsonResponse({"comments": CommentSerializer(Comment.objects.all(), many=True).data})
 
 
@@ -145,6 +169,12 @@ def comments(request:HttpRequest):
 @csrf_exempt
 @require_login
 def gen_comments(request):
+    """
+    Generuje przykładowe komentarze.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z komunikatem o wygenerowanych komentarzach
+    """
     if Comment.objects.count() >= 5:
         return JsonResponse({"message": "Already created"})
     Comment(
@@ -178,6 +208,12 @@ def gen_comments(request):
 @require_http_methods(["GET"])
 # No @require_login -> We simulate hackers website where no login is required.
 def domcompromise(request):
+    """
+    Endpoint do demonstracji kompromitacji DOM.
+
+    :param request: HttpRequest object
+    :return: HttpResponse z kodem HTML
+    """
     page = get_template("dom.html")
     return HttpResponse(page.render())
 
@@ -185,6 +221,12 @@ def domcompromise(request):
 @require_http_methods(["POST"])
 @require_login
 def create_sample(request):
+    """
+    Tworzy przykładową bazę danych.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z komunikatem o sukcesie/błędzie
+    """
     try:
         file = open("start.sql", "r")
         conn = sqlite3.connect('sample.sqlite3')
@@ -201,6 +243,12 @@ def create_sample(request):
 @require_http_methods(["GET"])
 @require_login
 def getsql(request:HttpRequest):
+    """
+    Zwraca dane z bazy danych.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z danymi z bazy
+    """
     try:
         conn = sqlite3.connect('sample.sqlite3')
         conn.row_factory = sqlite3.Row
@@ -236,6 +284,12 @@ def getsql(request:HttpRequest):
 # @require_http_methods(['POST']) # LAZY DEV DIDN'T ADD REQUIRED METHOD
 @require_login # CSRF attack will be successfull - web browser sends cookies by default.
 def render_mail(request:HttpRequest):
+    """
+    Renderuje i wysyła maila subskrypcyjnego.
+
+    :param request: HttpRequest object
+    :return: JsonResponse z komunikatem o wysłaniu maila
+    """
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Unauthorized. Please log in first!"}, status=401)
     try:

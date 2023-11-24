@@ -4,4 +4,8 @@ from .models import *
 admin.site.register(Comment)
 admin.site.register(UserProfile)
 
-# Register your models here.
+"""
+Konfiguracja panelu administracyjnego.
+
+Rejestruje modele `Comment` i `UserProfile` w panelu administracyjnym Django.
+"""

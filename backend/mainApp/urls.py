@@ -14,3 +14,19 @@ urlpatterns = [
     path("sqldemo/", views.getsql),
     path("subscribe/", views.render_mail)
 ]
+
+"""
+Moduł zawierający punkty końcowe (endpoints) dla aplikacji.
+
+Endpoints:
+- /register/ : Endpoint do rejestracji użytkownika.
+- /login/ : Endpoint do logowania użytkownika.
+- /logout/ : Endpoint do wylogowania użytkownika.
+- /islogin/ : Endpoint do sprawdzenia stanu zalogowania.
+- /comments/ : Endpoint do wyświetlania komentarzy.
+- /comments/gen/ : Endpoint do generowania komentarzy.
+- /js/ : Endpoint do obsługi kompromitacji DOM (niebezpieczne).
+- /sqlgen/ : Endpoint do tworzenia próbek SQL (niebezpieczne).
+- /sqldemo/ : Endpoint do pobierania przykładowego SQL (niebezpieczne).
+- /subscribe/ : Endpoint do renderowania maila subskrypcyjnego.
+"""
